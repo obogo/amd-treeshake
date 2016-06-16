@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Typescript Treeshake</title>
+    <title>AMD-Treeshake</title>
     <style>
         body, html {
             margin: 0;
@@ -128,7 +128,7 @@ define("bower_components/hb/utils/junk", ["require", "exports"], function (requi
 </textarea><textarea id="content-out"></textarea>
 <script src="amd-treeshake.js"></script>
 <script>
-    var tt = new TypescriptTools();
+    var tt = new AMDTools();
     function process(treeshakeOptions, optimizeOptions) {
         var original = getEl("content-in").value;
         var str = tt.treeshakeAMD(original, treeshakeOptions);

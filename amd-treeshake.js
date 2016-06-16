@@ -79,7 +79,7 @@ function Optimizer() {
     this.run = run;
 }
 
-function TypescriptTools() {
+function AMDTools() {
     var defineNameRx = /^("|')(.*?)\1/;
     var importsRx = /[,\s]+\[(.*?)\]/;
     var importCleanupRx = /(\s|"|')/g;
