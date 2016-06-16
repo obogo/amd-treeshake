@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Typescript Treeshake</title>
+    <style>
+        body, html {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        textarea {
+            display: inline-block;
+            width: 33%;
+            height: 90%;
+            box-sizing: border-box;
+        }
+
+        a {
+            display: inline-block;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+    </style>
+    <script>
+        function getEl(name) {
+            return document.getElementById(name);
+        }
+    </script>
+</head>
+<body>
+<div>
+    <a href="javascript:process()">Default</a>
+    <a href="javascript:process({keep: ['src/framework', 'framework']}, {comment:true})">Keep "src/framework"</a>
+    <a href="javascript:process({keep: ['src/framework'], removeUseStrict:true})">Keep "src/framework"
+        removeUseStrict</a>
+    <a href="javascript:process({keep: ['src/framework'], removeUseStrict:true}, {mangle:'obfuscate', comment:true})">Keep
+        "src/framework" Mangle</a>
+    <a href="javascript:process({keep: ['src/framework'], remove:['src/config']})">Keep "src/framework", Remove
+        "src/config"</a>
+    <a href="javascript:process({keep: ['src/framework'], compare:getEl('compare-content').value})">Keep
+        "src/framework", Compare</a>
+    <a href="javascript:process({keep: ['src/framework'], removeDuplicates:false})">Keep "src/framework",
+        RemoveDuplicates Disabled</a>
+</div>
+<textarea id="content-in">
+    //# sourceTS:each=bower_components/hb/utils/each
+    define("bower_components/hb/utils/each", ["require", "exports"], function (require, exports) {
+        "use strict";
+        function default_1(name) {
+            return 'Hello, ' + name;
+        }
+        Object.defineProperty(exports, "__esModule", { value: true });
+        exports.default = default_1;
+    });
+    define("bower_components/hb/utils/each2", ["require", "exports"], function (require, exports) {
+        "use strict";
+        function default_1(name) {
+            return 'Hello, ' + name;
+        }
+        Object.defineProperty(exports, "__esModule", { value: true });
+        exports.default = default_1;
+    });
+    define("bower_components/hb/utils/junk", ["require", "exports"], function (require, exports) {
+        "use strict";
+        function default_2(name) {
+            return 'Hello, ' + name;
+        }
+        Object.defineProperty(exports, "__esModule", { value: true });
+        exports.default = default_2;
+    });
+    define("person", ["require", "exports"], function (require, exports) {
+        "use strict";
+        function myPerson(name) {
+            return 'Hello, ' + name;
+        }
+        Object.defineProperty(exports, "__esModule", { value: true });
+        exports.myPerson = myPerson;
+    });
+    define("src/config", ["require", "exports", "dispatcher", "person"], function (require, exports, dispatcher, person) {
+        "use strict";
+        function name() {
+            return person.getName();
+        }
+        function createB(a, b, c) {
+            if (c === void 0) { c = 1; }
+            dispatcher.fn();
+            return {};
+        }
+        function createA() {
+            return '';
+        }
+    });
+    define("src/framework", ["require", "exports", "dispatcher", "src/config", "bower_components/hb/utils/each", "bower_components/hb/utils/each2", "person"], function (require, exports, dispatcher, config, each_1, each_2, person) {
+        "use strict";
+        function name() {
+            each_1.default('Jane');
+            var n = config.name();
+            return person.getName();
+        }
+        function createB(a, b, c) {
+            if (c === void 0) { c = 1; }
+            dispatcher.fn();
+            return {};
+        }
+        function createA() {
+            return '';
+        }
+    });
+</textarea><textarea id="compare-content">
+define("bower_components/hb/utils/each", ["require", "exports"], function (require, exports) {
+    "use strict";
+    function default_1(name) {
+        return 'Hello, ' + name;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = default_1;
+});
+define("bower_components/hb/utils/junk", ["require", "exports"], function (require, exports) {
+    "use strict";
+    function default_2(name) {
+        return 'Hello, ' + name;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = default_2;
+});
+</textarea><textarea id="content-out"></textarea>
+<script src="amd-treeshake.js"></script>
+<script>
+    var tt = new TypescriptTools();
+    function process(treeshakeOptions, optimizeOptions) {
+        var original = getEl("content-in").value;
+        var str = tt.treeshakeAMD(original, treeshakeOptions);
+        str = tt.optimizeAMD(str, optimizeOptions);
+        getEl('content-out').value = 'original:' + original.length + ' optimized:' + str.length + "\n" + str;
+    }
+</script>
+</body>
+</html>
